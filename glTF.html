@@ -105,9 +105,10 @@ x3d-canvas {
 
       #scenes,
       #animations {
-        display: none;
+        display: block;
       }
     </style>
+
     <script type="module" >
 class AnimationViewer
 {
@@ -134,7 +135,7 @@ class AnimationViewer
 
    async loadURL (filename)
    {
-      document .querySelector ( "#animations" ) .style .display = "none";
+      // document .querySelector ( "#animations" ) .style .display = "none";
 
       await this .browser .loadURL (new X3D .MFString (filename));
 
@@ -159,13 +160,12 @@ class AnimationViewer
 
    addAnimations ()
    {
-      const animations = $.try (() => this .scene .getExportedNode ("Animations"));
+      const animations = this .scene .getExportedNode ("Animations");
 
       if (!animations)
          return;
 
-      $("#animations") .empty ();
-      $("<b></b>") .text ("Animations") .appendTo ($("#animations"));
+      const animationsElem = document .querySelector ( "#animations" );
 
       for (const [i, group] of animations .children .entries ())
       {
@@ -173,42 +173,42 @@ class AnimationViewer
 
          const onclick = () =>
          {
-            $(`#animation${i}`) .toggleClass (["fa-circle", "fa-circle-dot", "selected"]);
-            $(`[for=animation${i}]`) .toggleClass ("selected");
+            // group .toggleClass (["fa-circle", "fa-circle-dot", "selected"]);
+            // group .toggleClass ("selected");
 
-            for (const group of animations .children)
-               group .children [0] .stopTime = Date .now () / 1000;
+            for (const kids of animations .children)
+               kids .children [0] .stopTime = Date .now () / 1000;
 
-            if (!$(`#animation${i}`) .hasClass ( "fa-circle-dot"))
-               return;
+            // if (!group .hasClass ( "fa-circle-dot"))
+            //    return;
 
-            $("#animations i") .each ((_, element) =>
-            {
-               if (element === $(`#animation${i}`) .get (0))
-                  return;
+            // $("#animations i") .each ((_, element) =>
+            // {
+            //    if (element === $(`#animation${i}`) .get (0))
+            //       return;
 
-               $(element) .removeClass (["fa-circle-dot", "selected"]) .addClass ("fa-circle");
-               $(`[for=${$(element) .attr ("id")}]`) .removeClass ("selected");
-            });
+            //    $(element) .removeClass (["fa-circle-dot", "selected"]) .addClass ("fa-circle");
+            //    $(`[for=${$(element) .attr ("id")}]`) .removeClass ("selected");
+            // });
 
-            timeSensor .loop      = true;
+            timeSensor .loop      = false;
             timeSensor .startTime = Date .now () / 1000;
          };
 
-         const button = $("<button></button>")
-            .addClass ("check")
-            .attr ("for", `animation${i}`)
-            .text (group .children [0] .description)
-            .on ("click", onclick)
-            .appendTo ($("#animations"));
+         const button = document .createElement ("button");
+         button .classList .add ("check");
+         button .setAttribute ("for", `animation${i}`);
+         button .textContent = group .children [0] .description;
+         button .addEventListener ("click", onclick);
+         animationsElem .appendChild (button);
 
-         $("<i></i>")
-            .addClass (["fa-regular", "fa-circle"])
-            .attr ("id", `animation${i}`)
-            .prependTo (button);
+         const icon = document .createElement ("i");
+         icon .classList .add ("fa-regular", "fa-circle");
+         icon .setAttribute ("id", `animation${i}`);
+         button .prepend (icon);
       }
 
-      $("#animations") .show () .find ("button") .first () .trigger ("click");
+      // $("#animations") .show () .find ("button") .first () .trigger ("click");
    }
 
 }
@@ -219,50 +219,19 @@ AnimationViewer .run( X3D .getBrowser() );
   </head>
   <body>
     <h1>glTF Animation Viewer</h1>
+
     <div class="viewer viewer-row">
       <div class="viewer-column1">
         <x3d-canvas class="xr-button-tr" debug="true" contentScale="auto"
           update="auto" toneMapping="KHR_PBR_NEUTRAL">
-          <X3D profile="Interchange" version="4.0">
-
-            <head>
-              <component name="Scripting" level="1"></component>
-              <component name="Text" level="1"></component>
-              <Scene>
-                <ProtoDeclare name="ColorScheme">
-                  <ProtoInterface>
-                    <field accessType="outputOnly" type="SFBool" name="light"></field>
-                    <field accessType="outputOnly" type="SFBool" name="dark"></field>
-                  </ProtoInterface>
-                  <ProtoBody>
-                    <script type="model/x3d+xml"
-                      def="ColorSchemeScript"> <field accessType='outputOnly' type='SFBool' name='light'></field> <field accessType='outputOnly' type='SFBool' name='dark'></field> <IS> <connect nodeField='light' protoField='light'></connect> <connect nodeField='dark' protoField='dark'></connect> </IS> <![CDATA[ecmascript: function initialize () { const colorScheme = window .matchMedia ("(prefers-color-scheme: light)"); colorScheme .addEventListener ("change", event => changeColorScheme (event)); changeColorScheme (colorScheme); } function changeColorScheme (event) { light = event .matches; if (typeof $ !== "undefined") { if ($("html") .attr ("data-mode") === "light") light = true; if ($("html") .attr ("data-mode") === "dark") light = false; } dark = !light; } ]]> </script>
-                  </ProtoBody>
-                </ProtoDeclare>
-                <ProtoInstance name="ColorScheme" DEF="_1"></ProtoInstance>
-                <Background DEF="White" skyColor="1 1 1"></Background>
-                <Background DEF="Black"></Background>
-                <Shape DEF="Light" visible="false">
-                  <Appearance>
-                    <UnlitMaterial emissiveColor="0 0 0"></UnlitMaterial>
-                  </Appearance>
-                  <Text DEF="_2" string="&quot;No model loaded yet&quot;">
-                    <FontStyle justify="&quot;MIDDLE&quot;, &quot;MIDDLE&quot;"></FontStyle>
-                  </Text>
-                </Shape>
-                <Shape DEF="Dark"> <Text USE="_2"></Text> </Shape>
-                <ROUTE fromNode="_1" fromField="light" toNode="Light" toField="set_visible"></ROUTE>
-                <ROUTE fromNode="_1" fromField="light" toNode="White" toField="set_bind"></ROUTE>
-                <ROUTE fromNode="_1" fromField="dark" toNode="Dark" toField="set_visible"></ROUTE>
-                <ROUTE fromNode="_1" fromField="dark" toNode="Black" toField="set_bind"></ROUTE>
-              </Scene>
-          </X3D>
         </x3d-canvas>
         <div id="options">
           <!-- <div id="scenes"></div>
           <div id="viewpoints"></div>
           <div id="material-variants"></div> -->
-          <div id="animations"></div>
+          <div id="animations">
+            <b>Animations</b>
+          </div>
         </div>
       </div>
     </div>
