@@ -1,0 +1,34 @@
+
+.gltf-options {
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  -webkit-user-select: none;
+  /* Safari */
+  user-select: none;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  min-width: 200px;
+  padding: 10px 20px;
+  background-color: var(--main-bg);
+  border: 1px solid var(--nav-border-color);
+  border-radius: 0.8rem;
+}
+
+.gltf-options b {
+  display: block;
+  -ms-user-select: auto;
+  /* IE 10 and IE 11 */
+  -webkit-user-select: auto;
+  /* Safari */
+  user-select: auto;
+}
+
+.gltf-options button {
+  display: block;
+}
+
+.gltf-animations {
+  display: block;
+  color: aliceblue;
+}
