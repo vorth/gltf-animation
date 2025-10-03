@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+    <title>glTF Animation Viewer</title>
+    
+    <link rel="stylesheet" href="google-styles.css">
+
+  </head>
+  <body>
+    <h1>glTF Animation Viewer</h1>
+
+    <model-viewer id="append-demo" src="./simple-torus-animation.glb"
+        camera-controls touch-action="pan-y" ar ar-modes="webxr scene-viewer" scale="0.2 0.2 0.2"
+        shadow-intensity="1" alt="A dumb little torus animation">
+      <div class="controls glass">
+      </div>
+    </model-viewer>
+    <script type="module">
+        const modelViewer = document.querySelector('#append-demo');
+        const controlsPanel = document.querySelector('#append-demo .controls');
+
+        modelViewer.addEventListener("load", loadModelAnimations);
+
+        function loadModelAnimations() {
+          modelViewer.availableAnimations.forEach(animationName => {
+            if (animationName !== "TPose")
+              controlsPanel.innerHTML += `
+              <button id="${animationName}">${animationName}</button>
+            `; // TODO change the input to a radio button
+          });
+
+          controlsPanel.querySelectorAll("button").forEach(slider => {
+            slider.addEventListener("click", updateAnimation);
+          });
+        }
+
+        function updateAnimation(event) {
+          modelViewer.animationName = event.target.id;
+          modelViewer.play();
+        }
+    </script>
+
+  </body>
+</html>
