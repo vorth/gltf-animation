@@ -48,23 +48,8 @@ class AnimationViewer
 
          const onclick = () =>
          {
-            // group .toggleClass (["fa-circle", "fa-circle-dot", "selected"]);
-            // group .toggleClass ("selected");
-
             for (const kids of animations .children)
                kids .children [0] .stopTime = Date .now () / 1000;
-
-            // if (!group .hasClass ( "fa-circle-dot"))
-            //    return;
-
-            // $("#animations i") .each ((_, element) =>
-            // {
-            //    if (element === $(`#animation${i}`) .get (0))
-            //       return;
-
-            //    $(element) .removeClass (["fa-circle-dot", "selected"]) .addClass ("fa-circle");
-            //    $(`[for=${$(element) .attr ("id")}]`) .removeClass ("selected");
-            // });
 
             timeSensor .loop      = false;
             timeSensor .startTime = Date .now () / 1000;
@@ -82,8 +67,6 @@ class AnimationViewer
          icon .setAttribute ("id", `animation${i}`);
          button .prepend (icon);
       }
-
-      // $("#animations") .show () .find ("button") .first () .trigger ("click");
    }
 
 }
